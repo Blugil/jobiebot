@@ -4,7 +4,7 @@ export default {
   data: new SlashCommandBuilder()
     .setName('ping')
     .setDescription('responds with pinging!'),
-  async execute(interaction: ChatInputCommandInteraction) {
+  async execute(interaction: ChatInputCommandInteraction){
     await interaction.reply('pingin!')
   },
 };
