@@ -1,7 +1,7 @@
-import  { Client } from 'discord.js'
+import  ClientWithCommands  from '../client'
 
 
-export default (client: Client): void => {
+export default (client: ClientWithCommands): void => {
   client.on("ready", async () => {
     console.log(`Logged in as ${client.user.tag}!`);
   });
