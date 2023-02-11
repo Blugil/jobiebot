@@ -12,8 +12,12 @@ export default {
       .setDescription("send an image of jobie")),
   async execute(client: ClientWithCommands, interaction: ChatInputCommandInteraction) {
     const image_link: string = interaction.options.getAttachment("image").attachment.toString()
-    DatabaseDriver.add_image(client.pool, image_link);
-    await interaction.reply(`This image has been added to the database! ${image_link}`)
+    const rows = await DatabaseDriver.add_image(client.pool, image_link);
+    if (rows.length < 1) {
+      await interaction.reply(`There was a problem and the iamge was not added to the database`);
+      return;
+    }
+    await interaction.reply(`This image has been added to the database! ${rows[0]["image_link"]}`)
   },
 };
 
