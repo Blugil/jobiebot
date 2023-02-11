@@ -1,15 +1,16 @@
 import { REST, Routes, Client, ClientOptions, Collection } from "discord.js";
-import { Client as Database_Client } from 'pg';
+import { Pool } from 'pg';
 
 import { SlashCommand } from "./commands/command";
 
 export default class ClientWithCommands extends Client {
   commands: Collection<string, any>;
-  db_client: Database_Client;
-  constructor(options: ClientOptions, commands: Collection<string, any>, db_client: Database_Client) {
+  pool: Pool;
+  constructor(options: ClientOptions, pool: Pool) {
     super(options);
-    this.commands = commands;
-    this.db_client = db_client;
+    this.pool = pool;
+
+    this.commands = new Collection<string, any>();
   }
 
   async attach_commands(client_id: string, token: string) {
@@ -17,7 +18,6 @@ export default class ClientWithCommands extends Client {
     this.commands.forEach((value: SlashCommand, _: string) => {
       command_payload.push(value.data.toJSON());
     });
-
     const rest = new REST({ version: '10' }).setToken(token);
 
     try {
@@ -33,14 +33,13 @@ export default class ClientWithCommands extends Client {
 
   async connect_database() {
     try {
-      await this.db_client.connect();
-      await this.db_client.query("SELECT NOW()");
+      const client = await this.pool.connect()
+      await client.query('SELECT NOW()')
+      client.release()
       console.log("successfully connected to db");
     } catch (err) {
       console.error("error executing query:", err);
-    } finally {
-      this.db_client.end();
-    }
+    }   
   }
 }
 

@@ -13,7 +13,7 @@ export default (client: ClientWithCommands): void => {
     }
 
     try {
-      await command.execute(interaction);
+      await command.execute(client, interaction);
     }
     catch(err) {
       console.error(err);
