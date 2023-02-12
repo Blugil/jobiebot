@@ -31,7 +31,7 @@ export default class ClientWithCommands extends Client {
     }
   }
 
-  async connect_database() {
+  async connect_pool() {
     try {
       const client = await this.pool.connect()
       await client.query('SELECT NOW()')

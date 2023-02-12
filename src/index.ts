@@ -1,9 +1,10 @@
 import { GatewayIntentBits, } from 'discord.js'
 import { Pool } from 'pg';
 
-import interactionCreate from './listeners/interactionCreate'
+import interactionCreate from './listeners/interaction_create'
 import ready from './listeners/ready'
 import message from './listeners/emoji_react'
+import voice_state_change from './listeners/voice_state_change';
 import ClientWithCommands from './client'
 
 // command imports
@@ -14,14 +15,10 @@ import Spam from './commands/global/spam'
 import Remove from './commands/global/remove'
 
 import 'dotenv/config'
-// import { SlashCommand } from './commands/command'
 
 // gathers environment variables
 const token = process.env.TOKEN || process.env.DEV_TOKEN
 const client_id = process.env.CLIENT_ID || process.env.DEV_CLIENT_ID
-
-// instances the database client
-// const database_client = new DatabaseClient(process.env.DATABASE_URL);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL 
@@ -29,7 +26,12 @@ const pool = new Pool({
 
 const client = new ClientWithCommands(
   {
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessages]
+    intents: [
+      GatewayIntentBits.Guilds, 
+      GatewayIntentBits.MessageContent, 
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildVoiceStates
+    ]
   }, 
   pool
 );
@@ -41,9 +43,11 @@ client.commands.set(Spam.data.name, Spam);
 client.commands.set(Remove.data.name, Remove);
 
 client.attach_commands(client_id, token);
-client.connect_database();
+client.connect_pool();
 
 ready(client);
 interactionCreate(client);
 message(client);
+voice_state_change(client);
 client.login(token);
+
