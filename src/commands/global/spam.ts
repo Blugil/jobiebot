@@ -7,8 +7,8 @@ export default {
     .setName('spam')
     .setDescription('sends three pictures of jobie!'),
   async execute(client: ClientWithCommands, interaction: ChatInputCommandInteraction) {
-    let rows: any[] = await DatabaseDriver.query_images(client.pool);
-    let images = [];
+    const rows: any[] = await DatabaseDriver.query_images(client.pool);
+    const images = [];
 
     if (rows.length < 1) {
       await interaction.reply(`There are no images in the database! Try adding some with /add`);
@@ -20,7 +20,7 @@ export default {
     }
 
     for (let i = 0; i < 3; i++) {
-      let index = Math.floor(Math.random() * rows.length);
+      const index = Math.floor(Math.random() * rows.length);
       images.push(rows[index]["image_link"]);
       rows.splice(index,1);
     }

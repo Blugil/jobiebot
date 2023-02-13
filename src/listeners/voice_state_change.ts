@@ -7,9 +7,9 @@ export default (client: ClientWithCommands): void => {
       return;
     }
 
-    let current_member_count: number = 0;
-    let channel_id: string = "";
-    let channel_name: string = "";
+    let current_member_count = 0;
+    let channel_id = "";
+    const channel_name = "";
 
     if (oldState.channel) {
       current_member_count = oldState.channel.members.size;
@@ -29,7 +29,7 @@ export default (client: ClientWithCommands): void => {
       await DatabaseListenerDriver.upsert_voice_session(client.pool, channel_id, channel_name, true);
     }
     else if (current_member_count < 1) {
-      let current_time = new Date();
+      const current_time = new Date();
 
       const response = await DatabaseListenerDriver.get_voice_session(client.pool, channel_id);
       const voice_session = response[0];
